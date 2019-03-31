@@ -3,11 +3,19 @@ REFERENCE = "Drosophila_melanogaster.BDGP6.dna_sm.toplevel.fa"
 WILDSTRAINS = ["GER1800140_Cs_LP180329001.g", "GER1800136_Ber_LP180329001.g", "GER1800138_OR_LP180329001.g"]
 
 #Need to add bwa-index rule
+rule snpEff:
+    input:
+      "wildstrains_merged.vcf.gz"
+    output:
+      "wildstrains_merged_ann.vcf.gz"
+    shell:
+      "java -Xmx4g -jar /home/iuriy/snpEff/snpEff.jar -v BDGP6.86 {input} > {output}"
+
 rule mergewt:
     input:
       expand('{sample}.vcf.gz', sample=WILDSTRAINS)
     output:
-      "wildstrains.vcf.merged.gz"
+      "wildstrains_merged.vcf.gz"
     shell:
       "vcf-merge {input} | bgzip > {output}"
 
