@@ -9,29 +9,31 @@ rule all:
 
 rule snpeff:
     input:
-      "vcfeval/vcfeval_{mutants}.vcf.gz",
+      "vcfeval/{mutants}/fp.vcf.gz",
     output:
-      "vcfeval/vcfeval_ann_{mutants}.vcf.gz",
+      "vcfeval/{mutants}/vcfeval_ann_{mutants}.vcf.gz",
     shell:
       "java -Xmx4g -jar /home/iuriy/snpEff/snpEff.jar -v BDGP6.86 {input} > {output}"
 
-#rule make_sdf:
-#    input:
-#        ref = REFERENCE
-#    output:
-#        "Drosophila_melanogaster.BDGP6.dna_sm.toplevel/"
-#    shell:
-#        "~/rtg-tools/rtg format -o Drosophila_melanogaster.BDGP6.dna_sm.toplevel {input.ref}"
-#
-#rule vcfeval: makes the directory
-#    input:
-#        ref = REFERENCE,
-#        wild="merged/wildstrains/wildstrains_merged.vcf.gz",
-#        mut="gatk/mutants/{mutants}.g.vcf.gz",
-#    output:
-#        "vcfeval/vcfeval_{mutants}.vcf.gz"
-#    shell:
-#        "~/rtg-tools rtg vcfeval -b {input.mut} -c {input.wild} -o ./vcfeval/ -t Drosophila_melanogaster.BDGP6.dna_sm.toplevel"
+
+rule vcfeval:
+    input:
+        ref = REFERENCE,
+        wild="merged/wildstrains/wildstrains_merged.vcf.gz",
+        mut="gatk/mutants/{mutants}.g.vcf.gz",
+        inp_dir="Drosophila_melanogaster.BDGP6.dna_sm.toplevel/"
+    output:
+        outdir="vcfeval/{mutants}/",
+    shell:
+        "~/rtg-tools/rtg vcfeval -b {input.mut} -c {input.wild} -o {{output.outdir}} -t {input.inp_dir}
+
+rule make_sdf:
+    input:
+        ref = REFERENCE
+    output:
+        outdir="Drosophila_melanogaster.BDGP6.dna_sm.toplevel/"
+    shell:
+        "~/rtg-tools/rtg format -o {output.outdir} {input.ref}"
 
 rule mergewt:
     input:
