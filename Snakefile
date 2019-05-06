@@ -5,7 +5,7 @@ MERGED = ["GER1800140_Cs_LP180329001", "GER1800136_Ber_LP180329001", "GER1800138
 
 rule all:
     input:
-        expand("vcfeval/vcfeval_ann_{mutants}.vcf.gz", mutants=MUTANTS)
+        expand("vcfeval/{mutants}/vcfeval_ann_{mutants}.vcf.gz", mutants=MUTANTS)
 
 rule snpeff:
     input:
@@ -23,9 +23,10 @@ rule vcfeval:
         mut="gatk/mutants/{mutants}.g.vcf.gz",
         inp_dir="Drosophila_melanogaster.BDGP6.dna_sm.toplevel/"
     output:
+        outfile="vcfeval/{mutants}/fp.vcf.gz",
         outdir="vcfeval/{mutants}/",
     shell:
-        "~/rtg-tools/rtg vcfeval -b {input.mut} -c {input.wild} -o {{output.outdir}} -t {input.inp_dir}
+        "~/rtg-tools/rtg vcfeval -b {input.mut} -c {input.wild} -o {{output.outdir}} -t {input.inp_dir}"
 
 rule make_sdf:
     input:
