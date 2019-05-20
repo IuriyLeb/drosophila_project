@@ -5,6 +5,7 @@ MUTANTS = ["GER1800139_X1_LP180329001", "GER1800137_ts3_LP180329001"]
 rule all:
     input:
         expand("snpeff/{mutants}/{mutants}_ann.vcf.gz", mutants=MUTANTS),
+        "reference/Drosophila_melanogaster.BDGP6.dna_sm.toplevel.fai",
         # expand("qc/fastqc_rep/{mutants}/report_{mutants}.html", mutants=MUTANTS),
         # expand("qc/fastqc_rep/{mutants}/report_{mutants}.zip",  mutants=MUTANTS),
         # expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.html", wildstrains=WILDSTRAINS),
@@ -168,12 +169,21 @@ rule samtools_wildstrains:
 
 rule samtools_mutants:
     input:
-        "mutants/sam/{mutants}.sam",
+        sam="mutants/sam/{mutants}.sam",
+        idx="reference/Drosophila_melanogaster.BDGP6.dna_sm.toplevel.fai"
     output:
         "mutants/bam/{mutants}.bam",
     threads: 4
     shell:
-        "samtools view -@ {threads} -S -b {input} > {output}"
+        "samtools view -@ {threads} -S -b {input.sam} > {output}"
+
+rule index_for_gatk:
+    input:
+        "reference/Drosophila_melanogaster.BDGP6.dna_sm.toplevel.fa"
+    output:
+        "reference/Drosophila_melanogaster.BDGP6.dna_sm.toplevel.fai"
+    shell:
+        "samtools faidx {input}"
 
 rule bwa_wildstrains:
     input:
@@ -244,25 +254,24 @@ rule trimmommatic_mutants:
     shell:
         "TrimmomaticPE -threads {threads} {input} {output} LEADING:20 TRAILING:20 SLIDINGWINDOW:6:20 MINLEN:30"
 
-
-rule fastqc_mutants:
-    input:
-        "mutants/{mutants}_R1.fastq.gz"
-    output:
-        html="qc/fastqc_rep/{mutants}/report_{mutants}.html",
-        zip="qc/fastqc_rep/{mutants}/report_{mutants}.zip"
-    log:
-        "logs/fastqc/{mutants}.log"
-    wrapper:
-        "0.34.0/bio/fastqc"
-
-rule fastqc_wildstrains:
-    input:
-        "wildstrains/{wildstrains}_R1.fastq.gz"
-    output:
-        html="qc/fastqc_rep/{wildstrains}/report_{wildstrains}.html",
-        zip="qc/fastqc_rep/{wildstrains}/report_{wildstrains}.zip"
-    log:
-        "logs/fastqc/{wildstrains}.log"
-    wrapper:
-        "0.34.0/bio/fastqc"
+# rule fastqc_mutants:
+#     input:
+#         "mutants/{mutants}_R1.fastq.gz"
+#     output:
+#         html="qc/fastqc_rep/{mutants}/report_{mutants}.html",
+#         zip="qc/fastqc_rep/{mutants}/report_{mutants}.zip"
+#     log:
+#         "logs/fastqc/{mutants}.log"
+#     wrapper:
+#         "0.34.0/bio/fastqc"
+#
+# rule fastqc_wildstrains:
+#     input:
+#         "wildstrains/{wildstrains}_R1.fastq.gz"
+#     output:
+#         html="qc/fastqc_rep/{wildstrains}/report_{wildstrains}.html",
+#         zip="qc/fastqc_rep/{wildstrains}/report_{wildstrains}.zip"
+#     log:
+#         "logs/fastqc/{wildstrains}.log"
+#     wrapper:
+#         "0.34.0/bio/fastqc"

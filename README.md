@@ -5,14 +5,23 @@ Drosophila(*D.melanogaster*) is a widely known and popular model organism. Due t
 Our goal was to detect mutations responsible for the formation of mutant phenotypes.
 To achieve this goal the following tasks were set.
 * Basic reads quality control
-* Find variants for all lines 
+* Find variants for all lines
 * Find out the differences between the genomes of wild and mutant lines
 * Identify mutations responsible for the formation of mutant phenotypes.  
 **All stages are included in the general pipeline as a Snakefile file, presented in this repository.**
 ## Methods
 ### Necessary software installing.
-In brackets - the version used in the project
-* FastQC (v0.11.5)
-* TrimmomaticPE ()
-## Files description 
+* FastQC - `sudo apt install fastqc`
+* TrimmomaticPE - `sudo apt install trimmomatic`
+* BWA - `sudo apt install bwa`
+* Samtools - `sudo apt install samtools`
+* Picard - `sudo apt install picard`
+* [GATK](https://software.broadinstitute.org/gatk/download/index)
+* [RTGTools](https://github.com/RealTimeGenomics/rtg-tools) - must be available in the following path: `~/rtg-tools/rtg`
+* Bedtools - `sudo apt install bedtools`
+* [SNPEff](http://snpeff.sourceforge.net/download.html) - must be available in the following path: `~/snpEff/snpEff.jar`
+## Files description
+1. Snakefile - executable file for Snakemake. To run, simply enter `snakemake` in project directory
+2. `./reference/xchrom.bed` - additional file for intersect with `.vcf` to leave only one chromosome.
+3. `dag.pdf` - pipeline scheme
 ## Results
