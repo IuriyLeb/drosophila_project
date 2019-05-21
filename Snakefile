@@ -4,20 +4,52 @@ MUTANTS = ["GER1800139_X1_LP180329001", "GER1800137_ts3_LP180329001"]
 
 rule all:
     input:
-        expand("snpeff/{mutants}/{mutants}_ann.vcf.gz", mutants=MUTANTS),
-        "reference/Drosophila_melanogaster.BDGP6.dna_sm.toplevel.fai",
+        expand("snpsift/{mutants}/{impact}_impact.vcf", mutants=MUTANTS, impact=['high', 'low', 'moderate', 'modifier'])
         # expand("qc/fastqc_rep/{mutants}/report_{mutants}.html", mutants=MUTANTS),
         # expand("qc/fastqc_rep/{mutants}/report_{mutants}.zip",  mutants=MUTANTS),
         # expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.html", wildstrains=WILDSTRAINS),
         # expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.zip", wildstrains=WILDSTRAINS)
 
+rule snpsift_modifier:
+        input:
+            "snpeff/{mutants}/{mutants}_ann_chrx.vcf",
+        output:
+            "snpsift/{mutants}/modifier_impact.vcf"
+        shell:
+            '''java -Xmx4g -jar ~/snpEff/SnpSift.jar filter "ANN[0].IMPACT has 'MODIFIER'" {input} > {output}'''
+
+rule snpsift_low:
+    input:
+        "snpeff/{mutants}/{mutants}_ann_chrx.vcf",
+    output:
+        "snpsift/{mutants}/low_impact.vcf"
+    shell:
+        '''java -Xmx4g -jar ~/snpEff/SnpSift.jar filter "ANN[0].IMPACT has 'LOW'" {input} > {output}'''
+
+rule snpsift_moderate:
+    input:
+        "snpeff/{mutants}/{mutants}_ann_chrx.vcf",
+    output:
+        "snpsift/{mutants}/moderate_impact.vcf"
+    shell:
+        '''java -Xmx4g -jar ~/snpEff/SnpSift.jar filter "ANN[0].IMPACT has 'MODERATE'" {input} > {output}'''
+
+rule snpsift_high:
+    input:
+        "snpeff/{mutants}/{mutants}_ann_chrx.vcf",
+    output:
+        "snpsift/{mutants}/high_impact.vcf"
+    shell:
+        '''java -Xmx4g -jar ~/snpEff/SnpSift.jar filter "ANN[0].IMPACT has 'HIGH'" {input} > {output}'''
+
+
 rule snpeff:
     input:
       "results/{mutants}_chrx.vcf",
     output:
-      "snpeff/{mutants}/{mutants}_ann.vcf.gz",
+      "snpeff/{mutants}/{mutants}_ann_chrx.vcf",
     shell:
-      "java -Xmx4g -jar /home/iuriy/snpEff/snpEff.jar -v BDGP6.86 {input} > {output}"
+      "java -Xmx4g -jar ~/snpEff/snpEff.jar -v BDGP6.86 {input} > {output}"
 
 rule cut_x_chrom:
     input:
@@ -34,7 +66,7 @@ rule unzip_vars:
     output:
         "vcfeval/{mutants}/fp.vcf"
     shell:
-        "gunzip {input}"
+        "sudo gunzip -k {input}"
 
 
 rule vcfeval:

@@ -9,6 +9,7 @@ To achieve this goal the following tasks were set.
 * Find out the differences between the genomes of wild and mutant lines
 * Identify mutations responsible for the formation of mutant phenotypes.  
 **All stages are included in the general pipeline as a Snakefile file, presented in this repository.**
+**Some rules require `sudo` privileges**
 ## Methods
 ### Necessary software installing.
 * FastQC - `sudo apt install fastqc`
