@@ -22,10 +22,11 @@ To achieve this goal the following tasks were set.
 * Bedtools - `sudo apt install bedtools`
 * [SNPEff](http://snpeff.sourceforge.net/download.html) - must be available in the following path: `~/snpEff/snpEff.jar`   
 ## Files description    
-1. Snakefile - executable file for Snakemake. To run, simply enter `snakemake` in project directory   
-2. `pipeline_*.pdf` - pipeline scheme   
-  * `pipeline_wo_fqc.pdf` - pipeline scheme without fastqc rule added(more compact)   
-  * `pipeline_with_fqc.pdf` - pipeline scheme with fastqc rule added(big picture)
-3. `/files` - directory with result images   
+1. Snakefile - executable file for Snakemake. To run, simply type `snakemake` in terminal in project directory.   
+2. `pipeline_*.pdf` - pipeline scheme.
+  * `pipeline_wo_fqc.pdf` - pipeline scheme without fastqc rule added(more compact).
+  * `pipeline_with_fqc.pdf` - pipeline scheme with fastqc rule added(big picture).
+3. `snpEff` - directory with snpEff results and summary files.
+4. `/files` - directory with result images.
 
 ## Results
