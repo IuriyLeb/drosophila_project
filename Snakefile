@@ -4,11 +4,11 @@ MUTANTS = ["GER1800139_X1_LP180329001", "GER1800137_ts3_LP180329001"]
 
 rule all:
     input:
-        expand("snpsift/{mutants}/{impact}_impact.vcf", mutants=MUTANTS, impact=['high', 'low', 'moderate', 'modifier'])
-        # expand("qc/fastqc_rep/{mutants}/report_{mutants}.html", mutants=MUTANTS),
-        # expand("qc/fastqc_rep/{mutants}/report_{mutants}.zip",  mutants=MUTANTS),
-        # expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.html", wildstrains=WILDSTRAINS),
-        # expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.zip", wildstrains=WILDSTRAINS)
+        expand("snpsift/{mutants}/{impact}_impact.vcf", mutants=MUTANTS, impact=['high', 'low', 'moderate', 'modifier']),
+        expand("qc/fastqc_rep/{mutants}/report_{mutants}.html", mutants=MUTANTS),
+        expand("qc/fastqc_rep/{mutants}/report_{mutants}.zip",  mutants=MUTANTS),
+        expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.html", wildstrains=WILDSTRAINS),
+        expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.zip", wildstrains=WILDSTRAINS)
 
 rule snpsift_modifier:
         input:
@@ -49,16 +49,17 @@ rule snpeff:
     output:
       "snpeff/{mutants}/{mutants}_ann_chrx.vcf",
     shell:
-      "java -Xmx4g -jar ~/snpEff/snpEff.jar -v BDGP6.86 {input} > {output}"
+      '''java -Xmx4g -jar ~/snpEff/snpEff.jar -v BDGP6.86 {input} > {output};
+      mv snpEff_genes.txt snpeff/{wildcards.mutants}/snpEff_genes.txt;
+      mv snpEff_summary.html snpeff/{wildcards.mutants}/snpEff_summary.html'''
 
 rule cut_x_chrom:
     input:
-        bed = "reference/xchrom.bed",
-        vars = "vcfeval/{mutants}/fp.vcf",
+        vars = "vcfeval/{mutants}/fp.vcf.gz",
     output:
         x_chrom = "results/{mutants}_chrx.vcf"
     shell:
-        "bedtools intersect -b {input.bed} -a {input.vars} > {output.x_chrom}"
+        "bcftools view {input.vars} --regions X -o {output.x_chrom}"
 
 rule unzip_vars:
     input:
@@ -220,8 +221,8 @@ rule index_for_gatk:
 rule bwa_wildstrains:
     input:
         REFERENCE,
-        "wildstrains/trimmed/{wildstrains}.1.fastq.gz",
-        "wildstrains/trimmed/{wildstrains}.2.fastq.gz",
+        "wildstrains/trimmed/{wildstrains}_R1.paired.fastq.gz",
+        "wildstrains/trimmed/{wildstrains}_R2.paired.fastq.gz",
     output:
         "wildstrains/sam/{wildstrains}.sam",
     threads: 4
@@ -239,38 +240,18 @@ rule bwa_mutants:
     shell:
         "bwa mem -t {threads} {input} > {output}"
 
-# rule trimmommatic_wildstrains:
-#     input:
-#         'wildstrains/{wildstrains}_R1.fastq.gz',
-#         'wildstrains/{wildstrains}_R2.fastq.gz',
-#     output:
-#         "wildstrains/trimmed/{wildstrains}_R1.paired.fastq.gz",
-#         "wildstrains/trimmed/{wildstrains}_R1.unpaired.fastq.gz",
-#         "wildstrains/trimmed/{wildstrains}_R2.paired.fastq.gz",
-#         "wildstrains/trimmed/{wildstrains}_R2.unpaired.fastq.gz",
-#     threads: 4
-#     shell:
-#         "TrimmomaticPE -threads {threads} {input} {output} LEADING:20 TRAILING:20 SLIDINGWINDOW:6:20 MINLEN:30"
-
-rule trimmomatic_pe_wild:
+rule trimmommatic_wildstrains:
     input:
-        r1="wildstrains/{wildstrains}_R1.fastq.gz",
-        r2="wildstrains/{wildstrains}_R2.fastq.gz",
+        'wildstrains/{wildstrains}_R1.fastq.gz',
+        'wildstrains/{wildstrains}_R2.fastq.gz',
     output:
-        r1="wildstrains/trimmed/{wildstrains}.1.fastq.gz",
-        r2="wildstrains/trimmed/{wildstrains}.2.fastq.gz",
-        # reads where trimming entirely removed the mate
-        r1_unpaired="wildstrains/trimmed/{wildstrains}.1.unpaired.fastq.gz",
-        r2_unpaired="wildstrains/trimmed/{wildstrains}.2.unpaired.fastq.gz"
-    log:
-        "logs/trimmomatic/{wildstrains}.log"
-    params:
-        # list of trimmers (see manual)
-        trimmer=["LEADING:20", "TRAILING:20", "SLIDINGWINDOW:6:20", "MINLEN:30"],
-    threads:
-        4
-    wrapper:
-        "0.34.0/bio/trimmomatic/pe"
+        "wildstrains/trimmed/{wildstrains}_R1.paired.fastq.gz",
+        "wildstrains/trimmed/{wildstrains}_R1.unpaired.fastq.gz",
+        "wildstrains/trimmed/{wildstrains}_R2.paired.fastq.gz",
+        "wildstrains/trimmed/{wildstrains}_R2.unpaired.fastq.gz",
+    threads: 4
+    shell:
+        "TrimmomaticPE -threads {threads} {input} {output} LEADING:20 TRAILING:20 SLIDINGWINDOW:6:20 MINLEN:30"
 
 
 rule trimmommatic_mutants:
@@ -286,24 +267,20 @@ rule trimmommatic_mutants:
     shell:
         "TrimmomaticPE -threads {threads} {input} {output} LEADING:20 TRAILING:20 SLIDINGWINDOW:6:20 MINLEN:30"
 
-# rule fastqc_mutants:
-#     input:
-#         "mutants/{mutants}_R1.fastq.gz"
-#     output:
-#         html="qc/fastqc_rep/{mutants}/report_{mutants}.html",
-#         zip="qc/fastqc_rep/{mutants}/report_{mutants}.zip"
-#     log:
-#         "logs/fastqc/{mutants}.log"
-#     wrapper:
-#         "0.34.0/bio/fastqc"
-#
-# rule fastqc_wildstrains:
-#     input:
-#         "wildstrains/{wildstrains}_R1.fastq.gz"
-#     output:
-#         html="qc/fastqc_rep/{wildstrains}/report_{wildstrains}.html",
-#         zip="qc/fastqc_rep/{wildstrains}/report_{wildstrains}.zip"
-#     log:
-#         "logs/fastqc/{wildstrains}.log"
-#     wrapper:
-#         "0.34.0/bio/fastqc"
+rule fastqc_mutants:
+    input:
+        "mutants/{mutants}_R1.fastq.gz"
+    output:
+        html="qc/fastqc_rep/{mutants}/report_{mutants}.html",
+        zip="qc/fastqc_rep/{mutants}/report_{mutants}.zip"
+    wrapper:
+        "0.34.0/bio/fastqc"
+
+rule fastqc_wildstrains:
+    input:
+        "wildstrains/{wildstrains}_R1.fastq.gz"
+    output:
+        html="qc/fastqc_rep/{wildstrains}/report_{wildstrains}.html",
+        zip="qc/fastqc_rep/{wildstrains}/report_{wildstrains}.zip"
+    wrapper:
+        "0.34.0/bio/fastqc"

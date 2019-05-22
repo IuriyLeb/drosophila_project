@@ -9,7 +9,7 @@ To achieve this goal the following tasks were set.
 * Find out the differences between the genomes of wild and mutant lines
 * Identify mutations responsible for the formation of mutant phenotypes.  
 **All stages are included in the general pipeline as a Snakefile file, presented in this repository.**
-**Some rules require `sudo` privileges**
+**Some rules require `sudo` privileges, be ready to enter your super-user password**
 ## Methods
 ### Necessary software installing.
 * FastQC - `sudo apt install fastqc`
@@ -20,9 +20,12 @@ To achieve this goal the following tasks were set.
 * [GATK](https://software.broadinstitute.org/gatk/download/index)
 * [RTGTools](https://github.com/RealTimeGenomics/rtg-tools) - must be available in the following path: `~/rtg-tools/rtg`
 * Bedtools - `sudo apt install bedtools`
-* [SNPEff](http://snpeff.sourceforge.net/download.html) - must be available in the following path: `~/snpEff/snpEff.jar`
-## Files description
-1. Snakefile - executable file for Snakemake. To run, simply enter `snakemake` in project directory
-2. `./reference/xchrom.bed` - additional file for intersect with `.vcf` to leave only one chromosome.
-3. `dag.pdf` - pipeline scheme
+* [SNPEff](http://snpeff.sourceforge.net/download.html) - must be available in the following path: `~/snpEff/snpEff.jar`   
+## Files description    
+1. Snakefile - executable file for Snakemake. To run, simply enter `snakemake` in project directory   
+2. `pipeline_*.pdf` - pipeline scheme   
+  * `pipeline_wo_fqc.pdf` - pipeline scheme without fastqc rule added(more compact)   
+  * `pipeline_with_fqc.pdf` - pipeline scheme with fastqc rule added(big picture)
+3. `/files` - directory with result images   
+
 ## Results
