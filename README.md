@@ -44,8 +44,10 @@ To achieve this goal the following tasks were set.
 
 ![](https://github.com/IuriyLeb/drosophila_project/blob/master/files/variants.jpg?raw=true)
 ### Common variants for ts3 and x1
-![](https://github.com/IuriyLeb/drosophila_project/blob/master/files/common.jpg?raw=true)
+<img src="https://github.com/IuriyLeb/drosophila_project/raw/master/files/common.jpg?raw=true" alt="" width="450" height="300">
 2. These variations are annotated and filtered according to their effect.
+
 ![](https://github.com/IuriyLeb/drosophila_project/blob/master/files/snp_indels.jpg?raw=true)
+
 3. The filtered variations are divided into groups by significance for manual analysis.
 4. The entire pipeline is made in Snakemake
