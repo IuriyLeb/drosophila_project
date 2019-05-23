@@ -8,7 +8,9 @@ rule all:
         expand("qc/fastqc_rep/{mutants}/report_{mutants}.html", mutants=MUTANTS),
         expand("qc/fastqc_rep/{mutants}/report_{mutants}.zip",  mutants=MUTANTS),
         expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.html", wildstrains=WILDSTRAINS),
-        expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.zip", wildstrains=WILDSTRAINS)
+        expand("qc/fastqc_rep/{wildstrains}/report_{wildstrains}.zip", wildstrains=WILDSTRAINS),
+        expand("snpeff/{mutants}/{mutants}_filtered_indels.vcf", mutants=MUTANTS),
+        expand("snpeff/{mutants}/{mutants}_filtered_snp.vcf", mutants=MUTANTS)
 
 rule snpsift_modifier:
         input:
@@ -55,11 +57,55 @@ rule snpeff:
 
 rule cut_x_chrom:
     input:
-        vars = "vcfeval/{mutants}/fp.vcf.gz",
+        vars = "snpeff/{mutants}/{mutants}_ann.vcf",
     output:
         x_chrom = "results/{mutants}_chrx.vcf"
     shell:
         "bcftools view {input.vars} --regions X -o {output.x_chrom}"
+
+rule filter_snpsift_indels:
+    input:
+        "snpeff/{mutants}/{mutants}_indels.vcf"
+    output:
+        "snpeff/{mutants}/{mutants}_filtered_indels.vcf"
+    shell:
+        '''java -jar SnpSift.jar filter "((ReadPosRankSum > -20.0) & (QD > 2.0) & (FS < 200.0) & (SOR < 10.0))" {input} > {output}'''
+
+
+rule filter_snpsift_snp:
+    input:
+        "snpeff/{mutants}/{mutants}_snp.vcf"
+    output:
+        "snpeff/{mutants}/{mutants}_filtered_snp.vcf"
+    shell:
+        '''java -jar SnpSift.jar filter "((ReadPosRankSum > -8.0) & (MQRankSum > -2.5) & (SOR < 3.0) & (QD > 2.0) & (FS < 60.0) & (MQ > 50.0))" {input} > {output}'''
+
+
+rule filter_indels:
+    input:
+        "snpeff/{mutants}/{mutants}_ann.vcf"
+    output:
+        "snpeff/{mutants}/{mutants}_indels.vcf"
+    shell:
+        "vcftools —vcf {input} —keep-only-indels —out {output} —recode —recode-INFO-all"
+
+rule filter_snp:
+    input:
+        "snpeff/{mutants}/{mutants}_ann.vcf"
+    output:
+        "snpeff/{mutants}/{mutants}_snp.vcf"
+    shell:
+        "vcftools —vcf {input} —remove-indels —out {output} —recode —recode-INFO-all"
+
+rule snpeff_mut:
+    input:
+        "vcfeval/{mutants}/fp.vcf"
+    output:
+        "snpeff/{mutants}/{mutants}_ann.vcf",
+    shell:
+        '''java -Xmx4g -jar ~/snpEff/snpEff.jar -v BDGP6.86 {input} > {output};
+        mv snpEff_genes.txt snpeff/{wildcards.mutants}/snpEff_genes.txt;
+        mv snpEff_summary.html snpeff/{wildcards.mutants}/snpEff_summary.html'''
 
 rule unzip_vars:
     input:

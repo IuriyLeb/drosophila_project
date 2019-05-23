@@ -20,7 +20,11 @@ To achieve this goal the following tasks were set.
 * [GATK](https://software.broadinstitute.org/gatk/download/index)
 * [RTGTools](https://github.com/RealTimeGenomics/rtg-tools) - must be available in the following path: `~/rtg-tools/rtg`
 * Bedtools - `sudo apt install bedtools`
-* [SNPEff](http://snpeff.sourceforge.net/download.html) - must be available in the following path: `~/snpEff/snpEff.jar`   
+* vcftools - `sudo apt install vcftools`
+* [SNPEff](http://snpeff.sourceforge.net/download.html) - must be available in the following path: `~/snpEff/snpEff.jar`
+  * Final SnpSift filtration runs with following parameters:
+    * `"((ReadPosRankSum > -8.0) & (MQRankSum > -2.5) & (SOR < 3.0) & (QD > 2.0) & (FS < 60.0) & (MQ > 50.0))"` for SNP's
+    * `"((ReadPosRankSum > -20.0) & (QD > 2.0) & (FS < 200.0) & (SOR < 10.0))"` for Indels
 ## Files description    
 1. Snakefile - executable file for Snakemake. To run, simply type `snakemake` in terminal in project directory.   
 2. `pipeline_*.pdf` - pipeline scheme.
@@ -30,3 +34,18 @@ To achieve this goal the following tasks were set.
 4. `/files` - directory with result images.
 
 ## Results
+1. For each of the mutant lines (X1, ts3) lists of variations were obtained.  
+
+|                | ts3 | x1 |
+|----------------|-----|----|
+| before vcfeval |   815608  |  803690  |
+| after vcfeval  |  326780   |  302019  |
+| in chrX        |   46165  |   46032 |
+
+![](https://github.com/IuriyLeb/drosophila_project/files/variant.png?raw=true)
+### Common variants for ts3 and x1
+![](https://github.com/IuriyLeb/drosophila_project/files/common.png?raw=true)
+2. These variations are annotated and filtered according to their effect.
+![](https://github.com/IuriyLeb/drosophila_project/files/snp_indels.png?raw=true)
+3. The filtered variations are divided into groups by significance for manual analysis.
+4. The entire pipeline is made in Snakemake
