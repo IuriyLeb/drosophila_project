@@ -42,10 +42,10 @@ To achieve this goal the following tasks were set.
 | after vcfeval  |  326780   |  302019  |
 | in chrX        |   46165  |   46032 |
 
-![](https://github.com/IuriyLeb/drosophila_project/files/variant.jpg?raw=true)
+![](https://github.com/IuriyLeb/drosophila_project/tree/master/files/variant.jpg?raw=true)
 ### Common variants for ts3 and x1
-![](https://github.com/IuriyLeb/drosophila_project/files/common.jpg?raw=true)
+![](https://github.com/IuriyLeb/drosophila_project/tree/master/files/common.jpg?raw=true)
 2. These variations are annotated and filtered according to their effect.
-![](https://github.com/IuriyLeb/drosophila_project/files/snp_indels.jpg?raw=true)
+![](https://github.com/IuriyLeb/drosophila_project/tree/master/files/snp_indels.jpg?raw=true)
 3. The filtered variations are divided into groups by significance for manual analysis.
 4. The entire pipeline is made in Snakemake
