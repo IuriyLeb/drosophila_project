@@ -12,16 +12,16 @@ To achieve this goal the following tasks were set.
 **Some rules require `sudo` privileges, be ready to enter your super-user password**
 ## Methods
 ### Necessary software installing.
-* FastQC - `sudo apt install fastqc`
-* TrimmomaticPE - `sudo apt install trimmomatic`
-* BWA - `sudo apt install bwa`
-* Samtools - `sudo apt install samtools`
-* Picard - `sudo apt install picard`
-* [GATK](https://software.broadinstitute.org/gatk/download/index)
-* [RTGTools](https://github.com/RealTimeGenomics/rtg-tools) - must be available in the following path: `~/rtg-tools/rtg`
-* Bedtools - `sudo apt install bedtools`
-* vcftools - `sudo apt install vcftools`
-* [SNPEff](http://snpeff.sourceforge.net/download.html) - must be available in the following path: `~/snpEff/snpEff.jar`
+* FastQC(v0.11.5) - `sudo apt install fastqc`
+* TrimmomaticPE(v0.22) - `sudo apt install trimmomatic`
+* BWA(v0.7.17-r1188) - `sudo apt install bwa`
+* Samtools(v1.7) - `sudo apt install samtools`
+* Picard(v1.138) - `sudo apt install picard`
+* [GATK](https://software.broadinstitute.org/gatk/download/index)(v4.1.0.0)
+* [RTGTools](https://github.com/RealTimeGenomics/rtg-tools)(v3.10.1) - must be available in the following path: `~/rtg-tools/rtg`
+* Bedtools(v2.26.0) - `sudo apt install bedtools`
+* vcftools(v0.1.17) - `sudo apt install vcftools`
+* [SNPEff](http://snpeff.sourceforge.net/download.html)(v4.3t) - must be available in the following path: `~/snpEff/snpEff.jar`
   * Final SnpSift filtration runs with following parameters:
     * `"((ReadPosRankSum > -8.0) & (MQRankSum > -2.5) & (SOR < 3.0) & (QD > 2.0) & (FS < 60.0) & (MQ > 50.0))"` for SNP's
     * `"((ReadPosRankSum > -20.0) & (QD > 2.0) & (FS < 200.0) & (SOR < 10.0))"` for Indels
