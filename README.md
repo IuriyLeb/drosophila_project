@@ -1,6 +1,6 @@
 # Whole Genome Drosophila Sequence
 ## Description
-Drosophila(*D.melanogaster*) is a widely known and popular model organism. Due to the small size of the Drosophila genome and its rapid reproduction, it is fairly easy to reproduce various conditions and diseases with their subsequent study. In this work, two Drosophila lines (X1 and ts3) with disturbances in the structure and functioning of the nervous system, which were compared with three wild-type lines, without physiological pathologies, were studied. Both of these lines can potentially be used to study Williams syndrome in humans.
+Drosophila(*D.melanogaster*) is a widely known and popular model organism. Due to the small size of the Drosophila genome and its rapid reproduction, it is fairly easy to reproduce various conditions and diseases with their subsequent study. In this work, two Drosophila lines (X1 and ts3) with disturbances in the structure and functioning of the nervous system, which were compared with three wild-type lines (Canton-S, Berlin, Oregon-R), without physiological pathologies, were studied. Both of these lines can potentially be used to study Williams syndrome in humans.
 ## Goals and objectives
 Our goal was to detect mutations responsible for the formation of mutant phenotypes.
 To achieve this goal the following tasks were set.
@@ -34,7 +34,7 @@ To achieve this goal the following tasks were set.
 4. `/files` - directory with result images.
 
 ## Results
-1. For each of the mutant lines (X1, ts3) lists of variations were obtained.  
+1. We obtained variants for each of the mutant and wild-type lines. Then we summed up wild-type variants and then duducted them from the mutant lines (X1, ts3) variants with vcfeval:   
 
 |                | ts3 | x1 |
 |----------------|-----|----|
